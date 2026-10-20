@@ -1,0 +1,105 @@
+@import "tailwindcss";
+@import "./components/dotmatrix-loader.css";
+
+:root {
+  --graphite: #221f22;
+  --ink: #171416;
+  --surface: #2b2629;
+  --line: #4a3b46;
+  --rose: #d46a7a;
+  --blush: #e8a6ae;
+  --cream: #f7f4f1;
+  --muted: #a89aa0;
+  --plum: #8a5a7c;
+  --sand: #c9a27e;
+  --sage: #8fa89a;
+  --slate: #7e8ba3;
+  --color-dot-on: var(--rose);
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: var(--ink);
+  color: var(--cream);
+  overflow: hidden;
+}
+
+body {
+  font-family: ui-monospace, "JetBrainsMono Nerd Font", "Iosevka", monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+.serif {
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  letter-spacing: -0.01em;
+}
+
+.label {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Slides rise in, with their children staggered by --i. */
+.rise > * {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: rise 700ms cubic-bezier(0.2, 0.7, 0.1, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 110ms + 80ms);
+}
+
+@keyframes rise {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.bar-grow {
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: grow 900ms cubic-bezier(0.2, 0.7, 0.1, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 90ms + 300ms);
+}
+
+@keyframes grow {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.col-grow {
+  transform-origin: center bottom;
+  transform: scaleY(0);
+  animation: colgrow 800ms cubic-bezier(0.2, 0.7, 0.1, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 28ms + 250ms);
+}
+
+@keyframes colgrow {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.still .rise > *,
+.still .bar-grow,
+.still .col-grow {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise > *,
+  .bar-grow,
+  .col-grow {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

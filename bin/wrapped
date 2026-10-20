@@ -1,0 +1,31 @@
+#!/bin/bash
+# wrapped [--weeks-ago N] [--png FILE]
+#
+# Collects the week, writes it beside the built page, and opens it as an app
+# window. --png renders the summary card to an image instead.
+set -euo pipefail
+
+root=$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)
+out="${XDG_CACHE_HOME:-$HOME/.cache}/omarchy-wrapped"
+mkdir -p "$out"
+
+args=() png=""
+while (($#)); do
+  case "$1" in
+    --png) png=$2; shift ;;
+    *) args+=("$1") ;;
+  esac
+  shift
+done
+
+cp "$root/web/dist/index.html" "$out/index.html"
+{ printf 'window.WRAPPED = '; python3 -I "$root/collect.py" "${args[@]}"; printf ';\n'; } > "$out/data.js.tmp"
+mv "$out/data.js.tmp" "$out/data.js"
+
+if [[ -n $png ]]; then
+  chromium --headless=new --disable-gpu-sandbox --hide-scrollbars --window-size=1400,900 \
+    --virtual-time-budget=8000 --screenshot="$png" "file://$out/index.html?still#card" >/dev/null 2>&1
+  echo "$png"
+else
+  omarchy-launch-webapp "file://$out/index.html"
+fi
